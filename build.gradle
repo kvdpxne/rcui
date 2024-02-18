@@ -1,0 +1,18 @@
+plugins {
+  id("java")
+  id("maven-publish")
+
+  alias(libraries.plugins.champeau.jmh)
+}
+
+group = "me.kvdpxne"
+version = "0.1.0"
+
+dependencies {
+  jmh(libraries.bundles.jmh)
+  testImplementation(libraries.jupiter)
+}
+
+test {
+  useJUnitPlatform()
+}

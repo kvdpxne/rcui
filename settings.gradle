@@ -1,0 +1,45 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+pluginManagement {
+
+  // Define repositories for plugin resolution, these repositories will
+  // be used for resolving project plugins.
+  repositories {
+    gradlePluginPortal()
+
+    mavenCentral()
+    mavenLocal()
+  }
+}
+
+dependencyResolutionManagement {
+
+  // Define repositories for dependency resolution, these repositories will
+  // be used for resolving project dependencies.
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+
+  // Set the repositories mode to fail on project repositories, this ensures
+  // that any project-defined repositories will result in a failure.
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+  // Define the file name for the version catalog and default name of the
+  // libraries extension (default: libs).
+  def fileName = "libraries"
+
+  // Create a version catalog using the specified file.
+  versionCatalogs {
+    create(fileName) {
+      // Load version information from a TOML file.
+      from(files("gradle/${fileName}.versions.toml"))
+    }
+  }
+
+  // Set the default extension name for libraries, this allows accessing
+  // dependencies using the "libraries" extension instead of the default "libs".
+  defaultLibrariesExtensionName.set(fileName)
+}
+
+rootProject.name = "forty2"
