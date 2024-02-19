@@ -40,7 +40,7 @@ final class DuplicationTest {
 
         // Generate identifiers in each thread.
         for (int j = 0; iterationCount > j; ++j) {
-          final String identifier = Forty2.create();
+          final String identifier = Forty2.alphanumeric();
 
           // Check for duplication and increment counter if found.
           if (!identifiers.add(identifier)) {
