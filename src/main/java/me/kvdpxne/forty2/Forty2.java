@@ -72,34 +72,9 @@ public final class Forty2 {
     // Assign the length of the character array.
     final int length = characters.length;
 
-    int i = length - 1;
-    int j = 1;
-
-    if (0 == i >>> 16) {
-      j += 16;
-      i <<= 16;
-    }
-
-    if (0 == i >>> 24) {
-      j += 8;
-      i <<= 8;
-    }
-
-    if (0 == i >>> 28) {
-      j += 4;
-      i <<= 4;
-    }
-
-    if (0 == i >>> 30) {
-      j += 2;
-      i <<= 2;
-    }
-
-    j -= i >>> 31;
-
     // Calculate the mask to ensure generated random values are within the
     // bounds of the character array.
-    final int mask = (2 << (31 - j)) - 1;
+    final int mask = (2 << 31 - Integer.numberOfLeadingZeros(length - 1)) - 1;
 
     // Calculate the step size for generating random bytes based on the
     // specified size and length of a character array.
@@ -111,6 +86,8 @@ public final class Forty2 {
     final byte[] bytes = new byte[step];
 
     // Index variables for iteration.
+    int i;
+    int j;
     int k;
 
     // Infinite loop to generate random string.
