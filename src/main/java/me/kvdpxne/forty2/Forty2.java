@@ -63,11 +63,28 @@ public class Forty2 {
     };
   }
 
+  // Private constructor to prevent instantiation.
   private Forty2() {
-    // Do nothing.
+    throw new InstatiationError(this.getClass());
   }
 
-  public static String create(final Random random, final char[] chars, final int size) {
+  /**
+   * Generates a random string of specified size using the provided characters
+   * and a random number generator.
+   * <p>
+   * Note: This method is considered unsafe as it does not perform any
+   * validation checks, such as checking for null or empty values.
+   * It assumes that the provided parameters are valid and does not handle
+   * potential edge cases.
+   * </p>
+   *
+   * @param random The Random object used to generate random bytes.
+   * @param chars  The characters to be used for generating the random string.
+   * @param size   The size of the random string to be generated.
+   * @return A random string of the specified size.
+   */
+  public static String _create(final Random random, final char[] chars,
+                               final int size) {
     // Length of the character array.
     final int length;
 
@@ -134,15 +151,158 @@ public class Forty2 {
     }
   }
 
-  public static String create(final char[] chars, final int size) {
-    return create(DEFAULT_NUMBER_GENERATOR, chars, size);
+  /**
+   * Checks if the provided Random object is not null.
+   *
+   * @param random The Random object to be checked.
+   * @throws NullPointerException If the Random object is null.
+   */
+  private static void checkRandom(
+    final Random random
+  ) {
+    if (null == random) {
+      throw new NullPointerException(
+        "Random object instance cannot be null!"
+      );
+    }
   }
 
-  public static String create(final int size) {
-    return create(DEFAULT_CHARACTERS, size);
+  /**
+   * Checks if the provided character array is not null, not empty, and does
+   * not contain duplicates.
+   *
+   * @param characters The character array to be checked.
+   * @throws NullPointerException     If the character array is null.
+   * @throws IllegalArgumentException If the character array is empty or
+   *                                  contains duplicates.
+   */
+  private static void checkCharacters(
+    final char[] characters
+  ) {
+    if (null == characters) {
+      throw new NullPointerException(
+        "Character array cannot be null!"
+      );
+    }
+
+    if (0 == characters.length) {
+      throw new IllegalArgumentException(
+        "Character array cannot be empty!"
+      );
+    }
+
+    final boolean[] duplications = new boolean[characters.length];
+    for (final char character : characters) {
+      if (duplications[character]) {
+        throw new IllegalArgumentException(
+          "Character array cannot have duplicates!"
+        );
+      }
+      duplications[character] = true;
+    }
   }
 
+  /**
+   * Checks if the provided size is greater than or equal to 9.
+   *
+   * @param size The size to be checked.
+   * @throws IllegalArgumentException If the size is less than 9.
+   */
+  private static void checkSize(
+    final int size
+  ) {
+    if (9 >= size) {
+      throw new IllegalArgumentException(
+        "The length of the generated string cannot be less than 9."
+      );
+    }
+  }
+
+  /**
+   * Generates a random string of specified size using the provided characters
+   * and a random number generator.
+   *
+   * @param random     The Random object used to generate random bytes.
+   * @param characters The characters to be used for generating the random
+   *                   string.
+   * @param size       The size of the random string to be generated.
+   * @return A random string of the specified size.
+   * @throws NullPointerException     If the Random object or the character
+   *                                  array is null.
+   * @throws IllegalArgumentException If the character array is empty or
+   *                                  contains duplicates, or if the size is
+   *                                  less than 9.
+   */
+  public static String create(
+    final Random random,
+    final char[] characters,
+    final int size
+  ) {
+    checkRandom(random);
+    checkCharacters(characters);
+    checkSize(size);
+
+    return _create(random, characters, size);
+  }
+
+  /**
+   * Generates a random string of specified size using the provided characters
+   * and a default random number generator.
+   *
+   * @param characters The characters to be used for generating the random
+   *                   string.
+   * @param size       The size of the random string to be generated.
+   * @return A random string of the specified size.
+   * @throws NullPointerException     If the character array is null.
+   * @throws IllegalArgumentException If the character array is empty or
+   *                                  contains duplicates, or if the size is
+   *                                  less than 9.
+   */
+  public static String create(
+    final char[] characters,
+    final int size
+  ) {
+    checkCharacters(characters);
+    checkSize(size);
+
+    return _create(
+      DEFAULT_NUMBER_GENERATOR,
+      characters,
+      size
+    );
+  }
+
+  /**
+   * Generates a random string of specified size using default characters and a
+   * default random number generator.
+   *
+   * @param size The size of the random string to be generated.
+   * @return A random string of the specified size.
+   * @throws IllegalArgumentException If the size is less than 9.
+   */
+  public static String create(
+    final int size
+  ) {
+    checkSize(size);
+
+    return _create(
+      DEFAULT_NUMBER_GENERATOR,
+      DEFAULT_CHARACTERS,
+      DEFAULT_SIZE
+    );
+  }
+
+  /**
+   * Generates a random string of default size using default characters and a
+   * default random number generator.
+   *
+   * @return A random string of default size.
+   */
   public static String create() {
-    return create(DEFAULT_SIZE);
+    return _create(
+      DEFAULT_NUMBER_GENERATOR,
+      DEFAULT_CHARACTERS,
+      DEFAULT_SIZE
+    );
   }
 }

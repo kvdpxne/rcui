@@ -7,7 +7,7 @@ jupiter = "5.10.2"
 champeau-jmh = { id = "me.champeau.jmh", version.ref = "champeau-jmh" }
 
 [libraries]
-jupiter = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter" }
+jupiter = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter" }
 jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
 jmh-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }
 jmh-bytecode = { module = "org.openjdk.jmh:jmh-generator-bytecode", version.ref = "jmh" }

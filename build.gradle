@@ -8,11 +8,39 @@ plugins {
 group = "me.kvdpxne"
 version = "0.1.0"
 
+def targetJavaVersion = 21
+java {
+  def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+
+  sourceCompatibility = javaVersion
+  targetCompatibility = javaVersion
+
+  if (JavaVersion.current() < javaVersion) {
+    toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+  }
+}
+
 dependencies {
   jmh(libraries.bundles.jmh)
   testImplementation(libraries.jupiter)
 }
 
-test {
+jmh {
+  jvmArgs = ["--enable-preview"]
+}
+
+tasks.withType(JavaCompile).configureEach {
+  if (10 <= targetJavaVersion || JavaVersion.current().isJava10Compatible()) {
+    options.release.set(targetJavaVersion)
+  }
+
+  options.compilerArgs += [
+    // Enable preview features for the Java compiler.
+    "--enable-preview"
+  ]
+}
+
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
+  jvmArgs += "--enable-preview"
 }
