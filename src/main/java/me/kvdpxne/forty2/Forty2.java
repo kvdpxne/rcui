@@ -41,7 +41,7 @@ public final class Forty2 {
   /**
    * Default size of the generated random identifiers.
    */
-  public static final int DEFAULT_SIZE = 11;
+  public static final int DEFAULT_SIZE = 14;
 
   // Private constructor to prevent instantiation.
   private Forty2() {
