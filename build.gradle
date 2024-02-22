@@ -25,8 +25,10 @@ dependencies {
   testImplementation(libraries.jupiter)
 }
 
+def ENABLE_PREVIEW = "--enable-preview"
+
 jmh {
-  jvmArgs = ["--enable-preview"]
+  jvmArgs.add(ENABLE_PREVIEW)
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -36,11 +38,11 @@ tasks.withType(JavaCompile).configureEach {
 
   options.compilerArgs += [
     // Enable preview features for the Java compiler.
-    "--enable-preview"
+    ENABLE_PREVIEW
   ]
 }
 
 tasks.withType(Test).configureEach {
   useJUnitPlatform()
-  jvmArgs += "--enable-preview"
+  jvmArgs += ENABLE_PREVIEW
 }
