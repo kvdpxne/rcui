@@ -46,3 +46,15 @@ tasks.withType(Test).configureEach {
   useJUnitPlatform()
   jvmArgs += ENABLE_PREVIEW
 }
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId = "me.kvdpxne"
+      artifactId = "forty2"
+      version = "0.1.0"
+
+      from components.java
+    }
+  }
+}
