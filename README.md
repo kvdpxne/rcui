@@ -112,7 +112,7 @@ var alphanumeric = Forty2.alphanumeric(21);
 var all = Forty2.all(21);
 
 // Generate a 36-character identifier using specified characters.
-var customized = Forty.create("0123456789abcdef".toCharArray(), 36);
+var customized = Forty2.create("0123456789abcdef".toCharArray(), 36);
 ```
 
 ### 📝 Note
