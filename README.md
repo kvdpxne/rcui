@@ -132,3 +132,9 @@ parameters.
 
 Now, you can integrate **Forty2** into your Java projects and leverage its
 capabilities to generate unique identifiers efficiently.
+
+## License
+
+This project is licensed under the **Apache License**, version **2.0**.
+See the [LICENSE](https://github.com/kvdpxne/forty2/blob/master/LICENSE) file
+for details.
