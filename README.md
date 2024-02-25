@@ -36,5 +36,5 @@ UUID_randomUUID              thrpt   25  1509.737 ±  1.545  ops/ms
 UUID_randomUUID_toString     thrpt   25  1223.936 ±  6.679  ops/ms
 ```
 
-Number of threads used in this the benchmark: 4.
+Number of threads used in this the benchmark: 4.  
 System: AMD Ryzen 5 2600, 16 GB RAM, Windows 10 22H2, JVM 21.
