@@ -8,6 +8,7 @@ plugins {
 group = "me.kvdpxne"
 version = "0.1.0"
 
+def ENABLE_PREVIEW = "--enable-preview"
 def targetJavaVersion = 21
 java {
   def javaVersion = JavaVersion.toVersion(targetJavaVersion)
@@ -25,9 +26,11 @@ dependencies {
   testImplementation(libraries.jupiter)
 }
 
-def ENABLE_PREVIEW = "--enable-preview"
-
 jmh {
+  jvmArgs.add(ENABLE_PREVIEW)
+}
+
+jmhRunBytecodeGenerator {
   jvmArgs.add(ENABLE_PREVIEW)
 }
 
@@ -40,6 +43,10 @@ tasks.withType(JavaCompile).configureEach {
     // Enable preview features for the Java compiler.
     ENABLE_PREVIEW
   ]
+}
+
+tasks.withType(JavaExec).configureEach {
+  jvmArgs.add(ENABLE_PREVIEW)
 }
 
 tasks.withType(Test).configureEach {
