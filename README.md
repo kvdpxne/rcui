@@ -1,9 +1,10 @@
 ## About
 
 **Forty2** is a lightweight and versatile **Java** library designed to generate
-unique identifiers with customizable length and character sets. Inspired by the
-concept of universal uniqueness, provides a simple yet powerful solution for
-generating unique identifiers tailored to your specific needs.
+unique identifiers with customizable length and character sets.
+Originally based on the concept of [Nano ID](https://github.com/ai/nanoid),
+it provides a simple yet powerful solution for generating unique identifiers
+tailored to your specific needs.
 
 ### Features
 
