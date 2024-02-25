@@ -16,7 +16,7 @@ tailored to your specific needs.
 - **Easy Integration**: Simple setup and easy integration into your projects,
   facilitating smooth adoption and usage.
 
-### Note
+### 📝 Note
 
 If you came here by accident and are **looking for a more efficient** way to
 generate unique identifiers than the natively built-in solution of
@@ -77,3 +77,58 @@ dependency search.
 
 For more information about [JitPack](https://jitpack.io) and how it works,
 you can refer to the [JitPack documentation](https://docs.jitpack.io).
+
+## Usage
+
+Using **Forty2** is straightforward.
+After including it in your project's dependencies, you can start generating
+unique identifiers with ease.
+
+### Basic Usage
+
+Here's a simple example of how to generate an identifier with **Forty2**:
+
+```java
+// Generate a 14-character identifier using alphanumeric characters.
+var alphanumeric = Forty2.alphanumeric();
+
+// Generate a 14-character identifier using all writable ASCII characters.
+var all = Forty2.all();
+```
+
+Using this method ensures optimized performance and safety in generating
+identifiers.
+
+### Advanced Usage
+
+You can customize the length and character set of the generated identifier
+according to your specific requirements:
+
+```java
+// Generate a 21-character identifier using alphanumeric characters.
+var alphanumeric = Forty2.alphanumeric(21);
+
+// Generate a 21-character identifier using all writable ASCII characters.
+var all = Forty2.all(21);
+
+// Generate a 36-character identifier using specified characters.
+var customized = Forty.create("0123456789abcdef".toCharArray(), 36);
+```
+
+### 📝 Note
+
+For security and performance reasons, it is recommended to review the character
+set used for generating identifiers and ensure that it meets your application's
+requirements.
+Additionally, consider implementing additional security measures if identifiers
+are used for sensitive operations.
+
+### ⚠️ Warning
+
+Using the method with `_` prefix like `_create` is faster than the
+method without `_` prefix, but it does not perform parameter validation.
+Therefore, it should only be used if you are certain about the transmitted
+parameters.
+
+Now, you can integrate **Forty2** into your Java projects and leverage its
+capabilities to generate unique identifiers efficiently.
