@@ -38,3 +38,42 @@ UUID_randomUUID_toString     thrpt   25  1223.936 ±  6.679  ops/ms
 
 Number of threads used in this the benchmark: 4.  
 System: AMD Ryzen 5 2600, 16 GB RAM, Windows 10 22H2, JVM 21.
+
+## Installation
+
+Below are the instructions for installing **Forty2** using
+[Gradle](https://gradle.org) with [JitPack](https://jitpack.io):
+
+### Gradle
+
+1. Open your `build.gradle` file.
+2. Add the [JitPack](https://jitpack.io) repository to your `repositories`
+   block:
+
+```groovy
+repositories {
+  maven {
+    url = "https://jitpack.io"
+    content {
+      includeGroup("com.github.kvdpxne")
+    }
+  }
+}
+```
+
+3. Add the **Forty2** dependency to your `dependencies` section:
+
+```groovy
+dependencies {
+  implementation("com.github.kvdpxne:forty2:<VERSION>")
+}
+```
+
+4. Replace `<VERSION>` with the version of **Forty2** you want to use.
+
+Now, your project will fetch the **Forty2** dependency from
+[JitPack](https://jitpack.io) while excluding other repositories from the
+dependency search.
+
+For more information about [JitPack](https://jitpack.io) and how it works,
+you can refer to the [JitPack documentation](https://docs.jitpack.io).
