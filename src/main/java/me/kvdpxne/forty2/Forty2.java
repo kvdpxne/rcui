@@ -1,5 +1,6 @@
 package me.kvdpxne.forty2;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -10,68 +11,15 @@ import java.util.Random;
 public final class Forty2 {
 
   /**
-   * Default number generator used for generating random identifiers.
-   */
-  public static final Random DEFAULT_NUMBER_GENERATOR = new SecureRandom();
-
-  /**
-   * Default set of alphanumeric characters used for generating random
-   * identifiers.
-   */
-  public static final char[] DEFAULT_ALPHANUMERIC_CHARACTERS = {
-    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42,
-    0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e,
-    0x4f, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a,
-    0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c,
-    0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
-    0x79, 0x7a
-  };
-
-  /**
-   * Default set of characters used for generating random identifiers,
-   * including special characters.
-   */
-  public static final char[] DEFAULT_CHARACTERS = {
-    0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,
-    0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
-    0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42, 0x43, 0x44,
-    0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50,
-    0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c,
-    0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
-    0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74,
-    0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e,
-  };
-
-  /**
-   * Mask for filtering random values when generating alphanumeric strings.
-   */
-  public static final int DEFAULT_ALPHANUMERIC_MASK = 0x3f;
-
-  /**
-   * Mask for filtering random values when generating strings with special
-   * characters.
-   */
-  public static final int DEFAULT_MASK = 0x7f;
-
-  /**
-   * Step size for generating random bytes when using alphanumeric characters.
-   */
-  public static final int DEFAULT_ALPHANUMERIC_STEP = 0x17;
-
-  /**
-   * Step size for generating random bytes when using characters including
-   * special characters.
-   */
-  public static final int DEFAULT_STEP = 0x1f;
-
-  /**
    * Default size of the generated random identifiers.
    */
   public static final int DEFAULT_SIZE = 14;
 
   /**
    * Private constructor to prevent instantiation.
+   * @deprecated This constructor is deprecated and throws an error if called.
    */
+  @Deprecated
   private Forty2() {
     throw new InstatiationError(this.getClass());
   }
@@ -98,7 +46,7 @@ public final class Forty2 {
    */
   public static String _create(
     final Random random,
-    final char[] characters,
+    final byte[] characters,
     final int mask,
     final int step,
     final int size
@@ -108,7 +56,7 @@ public final class Forty2 {
 
     // Initialize an array to store the generated characters and an array to
     // hold random bytes.
-    final char[] result = new char[size];
+    final byte[] result = new byte[size];
     final byte[] bytes = new byte[step];
 
     // Initialize loop variables.
@@ -143,7 +91,7 @@ public final class Forty2 {
 
         // If the desired size is reached, return the generated string.
         if (size == j) {
-          return new String(result, 0, size);
+          return new String(result, 0, size, StandardCharsets.UTF_8);
         }
       }
       // Continue looping until a string of the desired size is generated.
@@ -170,7 +118,7 @@ public final class Forty2 {
    */
   public static String _create(
     final Random random,
-    final char[] characters,
+    final byte[] characters,
     final int mask,
     final int size
   ) {
@@ -201,7 +149,7 @@ public final class Forty2 {
    */
   public static String _create(
     final Random random,
-    final char[] characters,
+    final byte[] characters,
     final int size
   ) {
     return _create(
@@ -280,6 +228,18 @@ public final class Forty2 {
   }
 
   /**
+   * Converts an array of characters to an array of bytes using UTF-8 encoding.
+   *
+   * @param characters The array of characters to be converted.
+   * @return The array of bytes representing the characters in UTF-8 encoding.
+   */
+  private static byte[] toBytes(
+    final char[] characters
+  ) {
+    return new String(characters).getBytes(StandardCharsets.UTF_8);
+  }
+
+  /**
    * Generates a random string of specified size using the provided characters
    * and a random number generator.
    *
@@ -305,7 +265,34 @@ public final class Forty2 {
 
     return _create(
       random,
-      characters,
+      toBytes(characters),
+      size
+    );
+  }
+
+  /**
+   * Generates a random string of specified size using the provided characters
+   * and a random number generator.
+   *
+   * @param random     The Random object used to generate random bytes.
+   * @param characters The string of characters to be used for generating the
+   *                   random string.
+   * @param size       The size of the random string to be generated.
+   * @return A random string of the specified size.
+   * @throws NullPointerException     If the Random object or the character
+   *                                  array is null.
+   * @throws IllegalArgumentException If the character array is empty or
+   *                                  contains duplicates, or if the size is
+   *                                  less than 5.
+   */
+  public static String create(
+    final Random random,
+    final String characters,
+    final int size
+  ) {
+    return create(
+      random,
+      characters.toCharArray(),
       size
     );
   }
@@ -331,8 +318,31 @@ public final class Forty2 {
     _checkSize(size);
 
     return _create(
-      DEFAULT_NUMBER_GENERATOR,
-      characters,
+      DefaultNumberGeneratorLazyHolder.DEFAULT_NUMBER_GENERATOR,
+      toBytes(characters),
+      size
+    );
+  }
+
+  /**
+   * Generates a random string of specified size using the provided characters
+   * and a default random number generator.
+   *
+   * @param characters The string of characters to be used for generating the
+   *                   random string.
+   * @param size       The size of the random string to be generated.
+   * @return A random string of the specified size.
+   * @throws NullPointerException     If the character array is null.
+   * @throws IllegalArgumentException If the character array is empty or
+   *                                  contains duplicates, or if the size is
+   *                                  less than 5.
+   */
+  public static String create(
+    final String characters,
+    final int size
+  ) {
+    return create(
+      characters.toCharArray(),
       size
     );
   }
@@ -351,9 +361,9 @@ public final class Forty2 {
     _checkSize(size);
 
     return _create(
-      DEFAULT_NUMBER_GENERATOR,
-      DEFAULT_ALPHANUMERIC_CHARACTERS,
-      DEFAULT_ALPHANUMERIC_MASK,
+      DefaultNumberGeneratorLazyHolder.DEFAULT_NUMBER_GENERATOR,
+      AsciiAlphanumeric.DEFAULT_ALPHANUMERIC_CHARACTERS,
+      AsciiAlphanumeric.DEFAULT_ALPHANUMERIC_MASK,
       size
     );
   }
@@ -372,9 +382,9 @@ public final class Forty2 {
     _checkSize(size);
 
     return _create(
-      DEFAULT_NUMBER_GENERATOR,
-      DEFAULT_CHARACTERS,
-      DEFAULT_MASK,
+      DefaultNumberGeneratorLazyHolder.DEFAULT_NUMBER_GENERATOR,
+      Ascii.DEFAULT_CHARACTERS,
+      Ascii.DEFAULT_MASK,
       size
     );
   }
@@ -387,10 +397,10 @@ public final class Forty2 {
    */
   public static String alphanumeric() {
     return _create(
-      DEFAULT_NUMBER_GENERATOR,
-      DEFAULT_ALPHANUMERIC_CHARACTERS,
-      DEFAULT_ALPHANUMERIC_MASK,
-      DEFAULT_ALPHANUMERIC_STEP,
+      DefaultNumberGeneratorLazyHolder.DEFAULT_NUMBER_GENERATOR,
+      AsciiAlphanumeric.DEFAULT_ALPHANUMERIC_CHARACTERS,
+      AsciiAlphanumeric.DEFAULT_ALPHANUMERIC_MASK,
+      AsciiAlphanumeric.DEFAULT_ALPHANUMERIC_STEP,
       DEFAULT_SIZE
     );
   }
@@ -403,11 +413,38 @@ public final class Forty2 {
    */
   public static String all() {
     return _create(
-      DEFAULT_NUMBER_GENERATOR,
-      DEFAULT_CHARACTERS,
-      DEFAULT_MASK,
-      DEFAULT_STEP,
+      DefaultNumberGeneratorLazyHolder.DEFAULT_NUMBER_GENERATOR,
+      Ascii.DEFAULT_CHARACTERS,
+      Ascii.DEFAULT_MASK,
+      Ascii.DEFAULT_STEP,
       DEFAULT_SIZE
     );
+  }
+
+  /**
+   * The DefaultNumberGeneratorLazyHolder class represents a pattern for lazy
+   * initialization of the DEFAULT_NUMBER_GENERATOR field.
+   *
+   * <p>
+   * Lazy initialization ensures that the field is initialized only when
+   * accessed for the first time, improving efficiency by avoiding
+   * unnecessary instantiation.
+   * </p>
+   */
+  private static final class DefaultNumberGeneratorLazyHolder {
+
+    /**
+     * Default number generator used for generating random identifiers.
+     */
+    private static final Random DEFAULT_NUMBER_GENERATOR = new SecureRandom();
+
+    /**
+     * Private constructor to prevent instantiation.
+     * @deprecated This constructor is deprecated and throws an error if called.
+     */
+    @Deprecated
+    private DefaultNumberGeneratorLazyHolder() {
+      throw new InstatiationError(this.getClass());
+    }
   }
 }
