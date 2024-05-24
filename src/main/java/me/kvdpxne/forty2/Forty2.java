@@ -2,11 +2,13 @@ package me.kvdpxne.forty2;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 /**
- * Library class for generating unique identifiers with customizable length
- * and character sets.
+ * Library class for generating unique identifiers with customizable length and
+ * character sets.
  */
 public final class Forty2 {
 
@@ -17,6 +19,7 @@ public final class Forty2 {
 
   /**
    * Private constructor to prevent instantiation.
+   *
    * @deprecated This constructor is deprecated and throws an error if called.
    */
   @Deprecated
@@ -25,20 +28,37 @@ public final class Forty2 {
   }
 
   /**
+   * Constructs a string from the given array of bytes using US-ASCII encoding.
+   *
+   * @param bytes The array of bytes to be used for constructing the string.
+   * @return The string constructed from the array of bytes using US-ASCII
+   * encoding.
+   */
+  private static String constructString(
+    final byte[] bytes
+  ) {
+    return new String(bytes, StandardCharsets.US_ASCII);
+  }
+
+  /**
    * Generates a random string of specified size using the provided characters,
    * mask, step, and a random number generator.
    * <p>
+   * If the length of the byte array is 1, the generated string (identifier)
+   * will consist only of that single character.
+   * </p>
+   * <p>
    * Note: This method is considered unsafe as it does not perform any
-   * validation checks, such as checking for null or empty values.
-   * It assumes that the provided parameters are valid and does not handle
-   * potential edge cases.
+   * validation checks, such as checking for null or empty values. It assumes
+   * that the provided parameters are valid and does not handle potential edge
+   * cases.
    * </p>
    *
    * @param random     The Random object used to generate random bytes.
    * @param characters The characters to be used for generating the random
    *                   string.
-   * @param mask       A mask used to limit the range of characters that can
-   *                   be chosen randomly.
+   * @param mask       A mask used to limit the range of characters that can be
+   *                   chosen randomly.
    * @param step       The step size used to iterate through the generated
    *                   random bytes.
    * @param size       The size of the random string to be generated.
@@ -54,9 +74,16 @@ public final class Forty2 {
     // Determine the length of the character array.
     final int length = characters.length;
 
-    // Initialize an array to store the generated characters and an array to
-    // hold random bytes.
+    // Initialize a result byte array.
     final byte[] result = new byte[size];
+
+    // If only one character is provided, fill the result with that character.
+    if (1 == length) {
+      Arrays.fill(result, characters[0]);
+      return constructString(result);
+    }
+
+    // Initialize a byte array for random bytes.
     final byte[] bytes = new byte[step];
 
     // Initialize loop variables.
@@ -91,7 +118,7 @@ public final class Forty2 {
 
         // If the desired size is reached, return the generated string.
         if (size == j) {
-          return new String(result, 0, size, StandardCharsets.UTF_8);
+          return constructString(result);
         }
       }
       // Continue looping until a string of the desired size is generated.
@@ -102,17 +129,21 @@ public final class Forty2 {
    * Generates a random string of specified size using the provided characters,
    * mask, and a random number generator.
    * <p>
+   * If the length of the byte array is 1, the generated string (identifier)
+   * will consist only of that single character.
+   * </p>
+   * <p>
    * Note: This method is considered unsafe as it does not perform any
-   * validation checks, such as checking for null or empty values.
-   * It assumes that the provided parameters are valid and does not handle
-   * potential edge cases.
+   * validation checks, such as checking for null or empty values. It assumes
+   * that the provided parameters are valid and does not handle potential edge
+   * cases.
    * </p>
    *
    * @param random     The Random object used to generate random bytes.
    * @param characters The characters to be used for generating the random
    *                   string.
-   * @param mask       A mask used to limit the range of characters that can
-   *                   be chosen randomly.
+   * @param mask       A mask used to limit the range of characters that can be
+   *                   chosen randomly.
    * @param size       The size of the random string to be generated.
    * @return A random string of the specified size.
    */
@@ -135,10 +166,14 @@ public final class Forty2 {
    * Generates a random string of specified size using the provided characters
    * and a random number generator.
    * <p>
+   * If the length of the byte array is 1, the generated string (identifier)
+   * will consist only of that single character.
+   * </p>
+   * <p>
    * Note: This method is considered unsafe as it does not perform any
-   * validation checks, such as checking for null or empty values.
-   * It assumes that the provided parameters are valid and does not handle
-   * potential edge cases.
+   * validation checks, such as checking for null or empty values. It assumes
+   * that the provided parameters are valid and does not handle potential edge
+   * cases.
    * </p>
    *
    * @param random     The Random object used to generate random bytes.
@@ -169,46 +204,86 @@ public final class Forty2 {
   public static void _checkRandom(
     final Random random
   ) {
-    if (null == random) {
-      throw new NullPointerException(
-        "Random object instance cannot be null!"
-      );
-    }
+    Objects.requireNonNull(
+      random,
+      "Random object instance cannot be null!"
+    );
   }
 
   /**
-   * Checks if the provided character array is not null, not empty, and does
-   * not contain duplicates.
+   * Checks if the provided character array is not empty, does not contain
+   * duplicates, and contains only ASCII characters.
    *
    * @param characters The character array to be checked.
-   * @throws NullPointerException     If the character array is null.
-   * @throws IllegalArgumentException If the character array is empty or
-   *                                  contains duplicates.
+   * @throws IllegalArgumentException If the character array is empty, contains
+   *                                  duplicates, or contains non-ASCII
+   *                                  characters.
    */
-  public static void _checkCharacters(
+  private static void checkCharactersValidity(
     final char[] characters
   ) {
-    if (null == characters) {
-      throw new NullPointerException(
-        "Character array cannot be null!"
-      );
-    }
-
     if (0 == characters.length) {
       throw new IllegalArgumentException(
         "Character array cannot be empty!"
       );
     }
 
-    final boolean[] duplications = new boolean[256];
-    for (final char character : characters) {
+    final boolean[] duplications = new boolean[106];
+    for (final int character : characters) {
+      if (22 > character || 126 < character) {
+        throw new IllegalArgumentException(
+          "The character array cannot contain non-ASCII characters."
+        );
+      }
       if (duplications[character]) {
         throw new IllegalArgumentException(
           "Character array cannot have duplicates!"
         );
       }
-      duplications[character] = true;
+      duplications[character + 21] = true;
     }
+  }
+
+  /**
+   * Checks if the provided character array is not null, not empty, and does not
+   * contain duplicates or non-ASCII characters.
+   *
+   * @param characters The character array to be checked.
+   * @throws NullPointerException     If the character array is null.
+   * @throws IllegalArgumentException If the character array is empty, contains
+   *                                  duplicates, or contains non-ASCII
+   *                                  characters.
+   */
+  public static void _checkCharacters(
+    final char[] characters
+  ) {
+    checkCharactersValidity(
+      Objects.requireNonNull(
+        characters,
+        "Character array cannot be null!"
+      )
+    );
+  }
+
+  /**
+   * Checks if the provided string is not null, not empty, and does not contain
+   * duplicates or non-ASCII characters.
+   *
+   * @param characters The string to be checked.
+   * @throws NullPointerException     If the string is null.
+   * @throws IllegalArgumentException If the string is empty, contains
+   *                                  duplicates, or contains non-ASCII
+   *                                  characters.
+   */
+  public static void _checkCharacters(
+    final String characters
+  ) {
+    checkCharactersValidity(
+      Objects.requireNonNull(
+        characters,
+        "Character array cannot be null!"
+      ).toCharArray()
+    );
   }
 
   /**
@@ -236,12 +311,33 @@ public final class Forty2 {
   private static byte[] toBytes(
     final char[] characters
   ) {
-    return new String(characters).getBytes(StandardCharsets.UTF_8);
+    final byte[] bytes = new byte[characters.length];
+    for (int i = 0; characters.length > i; ++i) {
+      bytes[i] = (byte) characters[i];
+    }
+    return bytes;
+  }
+
+  /**
+   * Converts a string to an array of bytes using US-ASCII encoding.
+   *
+   * @param characters The string to be converted.
+   * @return The array of bytes representing the characters in US-ASCII
+   * encoding.
+   */
+  private static byte[] toBytes(
+    final String characters
+  ) {
+    return characters.getBytes(StandardCharsets.US_ASCII);
   }
 
   /**
    * Generates a random string of specified size using the provided characters
    * and a random number generator.
+   * <p>
+   * If the length of the character array is 1, the generated string
+   * (identifier) will consist only of that single character.
+   * </p>
    *
    * @param random     The Random object used to generate random bytes.
    * @param characters The characters to be used for generating the random
@@ -273,6 +369,10 @@ public final class Forty2 {
   /**
    * Generates a random string of specified size using the provided characters
    * and a random number generator.
+   * <p>
+   * If the length of the string is 1, the generated string (identifier) will
+   * consist only of that single character.
+   * </p>
    *
    * @param random     The Random object used to generate random bytes.
    * @param characters The string of characters to be used for generating the
@@ -290,9 +390,13 @@ public final class Forty2 {
     final String characters,
     final int size
   ) {
-    return create(
+    _checkRandom(random);
+    _checkCharacters(characters);
+    _checkSize(size);
+
+    return _create(
       random,
-      characters.toCharArray(),
+      toBytes(characters),
       size
     );
   }
@@ -300,6 +404,10 @@ public final class Forty2 {
   /**
    * Generates a random string of specified size using the provided characters
    * and a default random number generator.
+   * <p>
+   * If the length of the character array is 1, the generated string
+   * (identifier) will consist only of that single character.
+   * </p>
    *
    * @param characters The characters to be used for generating the random
    *                   string.
@@ -327,6 +435,10 @@ public final class Forty2 {
   /**
    * Generates a random string of specified size using the provided characters
    * and a default random number generator.
+   * <p>
+   * If the length of the string is 1, the generated string (identifier) will
+   * consist only of that single character.
+   * </p>
    *
    * @param characters The string of characters to be used for generating the
    *                   random string.
@@ -341,8 +453,48 @@ public final class Forty2 {
     final String characters,
     final int size
   ) {
-    return create(
-      characters.toCharArray(),
+    _checkCharacters(characters);
+    _checkSize(size);
+
+    return _create(
+      DefaultNumberGeneratorLazyHolder.DEFAULT_NUMBER_GENERATOR,
+      toBytes(characters),
+      size
+    );
+  }
+
+  /**
+   *
+   */
+  public static String alphanumeric(
+    final Random random,
+    final int size
+  ) {
+    _checkRandom(random);
+    _checkSize(size);
+
+    return _create(
+      random,
+      AsciiAlphanumeric.DEFAULT_ALPHANUMERIC_CHARACTERS,
+      AsciiAlphanumeric.DEFAULT_ALPHANUMERIC_MASK,
+      size
+    );
+  }
+
+  /**
+   *
+   */
+  public static String all(
+    final Random random,
+    final int size
+  ) {
+    _checkRandom(random);
+    _checkSize(size);
+
+    return _create(
+      random,
+      Ascii.DEFAULT_CHARACTERS,
+      Ascii.DEFAULT_MASK,
       size
     );
   }
@@ -424,11 +576,10 @@ public final class Forty2 {
   /**
    * The DefaultNumberGeneratorLazyHolder class represents a pattern for lazy
    * initialization of the DEFAULT_NUMBER_GENERATOR field.
-   *
    * <p>
    * Lazy initialization ensures that the field is initialized only when
-   * accessed for the first time, improving efficiency by avoiding
-   * unnecessary instantiation.
+   * accessed for the first time, improving efficiency by avoiding unnecessary
+   * instantiation.
    * </p>
    */
   private static final class DefaultNumberGeneratorLazyHolder {
@@ -440,6 +591,7 @@ public final class Forty2 {
 
     /**
      * Private constructor to prevent instantiation.
+     *
      * @deprecated This constructor is deprecated and throws an error if called.
      */
     @Deprecated
