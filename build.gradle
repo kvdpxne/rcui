@@ -8,8 +8,7 @@ plugins {
 group = "me.kvdpxne"
 version = "0.1.0"
 
-def ENABLE_PREVIEW = "--enable-preview"
-def targetJavaVersion = 21
+def targetJavaVersion = 8
 java {
   def javaVersion = JavaVersion.toVersion(targetJavaVersion)
 
@@ -26,32 +25,14 @@ dependencies {
   testImplementation(libraries.jupiter)
 }
 
-jmh {
-  jvmArgs.add(ENABLE_PREVIEW)
-}
-
-jmhRunBytecodeGenerator {
-  jvmArgs.add(ENABLE_PREVIEW)
-}
-
 tasks.withType(JavaCompile).configureEach {
   if (10 <= targetJavaVersion || JavaVersion.current().isJava10Compatible()) {
     options.release.set(targetJavaVersion)
   }
-
-  options.compilerArgs += [
-    // Enable preview features for the Java compiler.
-    ENABLE_PREVIEW
-  ]
-}
-
-tasks.withType(JavaExec).configureEach {
-  jvmArgs.add(ENABLE_PREVIEW)
 }
 
 tasks.withType(Test).configureEach {
   useJUnitPlatform()
-  jvmArgs += ENABLE_PREVIEW
 }
 
 publishing {
@@ -59,7 +40,7 @@ publishing {
     mavenJava(MavenPublication) {
       groupId = "me.kvdpxne"
       artifactId = "forty2"
-      version = "0.1.0"
+      version = "0.2.0"
 
       from components.java
     }
