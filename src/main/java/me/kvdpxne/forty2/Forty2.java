@@ -1,17 +1,125 @@
 package me.kvdpxne.forty2;
 
-public final class Forty2 {
+import java.io.Serializable;
+
+/**
+ * @since 0.2.0
+ */
+public final class Forty2
+  implements Serializable {
 
   /**
-   *
+   * The size of the 64-bit number represented as a string.
+   * <p>
+   * This constant defines the length of the string representation of a 64-bit
+   * number.
+   * </p>
+   */
+  public static final int FORTY2_SIZE = 13;
+
+  /**
+   * Unique identifier for serialization.
+   * <p>
+   * This value is used to ensure that during deserialization, the sender and
+   * receiver of a serialized object have loaded classes for that object that
+   * are compatible with respect to serialization.
+   * </p>
+   */
+  private static final long serialVersionUID = 138675774340690844L;
+
+  /**
+   * The 64-bit number represented as a long value.
+   * <p>
+   * Only the lower 64 bits of this value are considered significant.
+   * </p>
    */
   private final long number;
 
   /**
+   * Constructs a new {@code Forty2} object with the specified number.
+   * <p>
+   * This constructor initializes the {@code number} field with the provided
+   * long value.
+   * </p>
    *
+   * @param number the 64-bit number to be represented.
    */
   Forty2(final long number) {
     this.number = number;
+  }
+
+  /**
+   * Checks if the given long value is a valid 64-bit number.
+   * <p>
+   * A valid 64-bit number is either less than -9 or greater than -1.
+   * </p>
+   *
+   * @param number the long value to be checked.
+   * @return {@code true} if the number is valid, {@code false} otherwise.
+   */
+  public static boolean isValid(
+    final long number
+  ) {
+    return -9 > number || -1 < number;
+  }
+
+  /**
+   * Checks if the given string is a valid representation of a 64-bit number.
+   * <p>
+   * A valid string representation has a length of {@link #FORTY2_SIZE} and
+   * contains only digits and letters. Positive numbers are represented with
+   * lowercase letters, and negative numbers with uppercase letters.
+   * </p>
+   *
+   * @param string the string to be checked.
+   * @return {@code true} if the string is a valid representation, {@code false}
+   * otherwise.
+   */
+  public static boolean isValid(
+    final String string
+  ) {
+    final int length;
+    if (null == string || FORTY2_SIZE != (length = string.length())) {
+      return false;
+    }
+
+    boolean isPositive = false;
+    boolean isNegative = false;
+
+    for (int i = 0; i < length; i++) {
+      final int codePoint = string.charAt(i);
+
+      // Check if both positive and negative flags are set
+      if (isPositive && isNegative) {
+        return false;
+      }
+
+      // Check if the character is a digit (0-9)
+      if (codePoint >= 48 && codePoint <= 57) {
+        continue;
+      }
+
+      // Check if the character is a lowercase letter (a-z)
+      if (0x61 <= codePoint && 0x7a >= codePoint) {
+        if (!isPositive) {
+          isPositive = true;
+        }
+        continue;
+      }
+
+      // Check if the character is an uppercase letter (A-Z)
+      if (0x41 <= codePoint && 0x5b > codePoint) {
+        if (!isNegative) {
+          isNegative = true;
+        }
+        continue;
+      }
+
+      // Invalid character found
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -49,7 +157,7 @@ public final class Forty2 {
   public static Forty2 from(
     final long number
   ) {
-    if (-9 <= number && number <= -1) {
+    if (!isValid(number)) {
       throw new IllegalArgumentException();
     }
     return _from(number);
@@ -76,44 +184,48 @@ public final class Forty2 {
   }
 
   /**
+   * Creates a {@link Forty2} object from a valid base-36 encoded string.
+   * <p>
+   * This method checks if the string is a valid representation of a 64-bit
+   * number before converting it.
+   * </p>
    *
+   * @param string the base-36 encoded string to be converted.
+   * @return a new {@link Forty2} object representing the parsed long value.
+   * @throws IllegalArgumentException if the string is not a valid
+   *                                  representation.
+   * @see #_from(String)
    */
   public static Forty2 from(
     final String string
   ) {
-    final int minusIndex = string.indexOf('-');
-    //
-    //
-    if (0 == minusIndex) {
-      return _from(string);
+    if (!isValid(string)) {
+      throw new IllegalArgumentException();
     }
-    // 2 scenariusze
-    // albo liczba nie jest ujemna i jest typem javy
-    // albo liczba jest ujemna i jest typem Forty2
-    if (-1 == minusIndex) {
-      final int length = string.length();
-      // jezeli ciag znakow jest o dlugosci 1 to nie ma znaczenia czy liczba
-      // nie jest ujemna i jest typem java czy jest ujemna i jest typem Forty2
-      // poniewaz liczba bedzie zawsze dodatnia, poniewaz Forty2 nie wspiera
-      // liczb ujemnych w zakresie od -9 do -1
-      if (1 == length) {
-        return _from(string);
+
+    int next = 0;
+    for (int i = 0; i < FORTY2_SIZE; ++i) {
+      if (48 != string.charAt(i)) {
+        next = i;
+        break;
       }
-      int i = 0;
-      do {
-        //
-        //
-        if (Ascii36.isUppercase(string.charAt(i))) {
-          return _from("-" + string.toUpperCase());
-        }
-        ++i;
-      } while (length > i);
-      //
-      //
+    }
+
+    if (1 == FORTY2_SIZE - next) {
       return _from(string);
     }
-    //
-    throw new IllegalArgumentException();
+
+    int i = 0;
+    do {
+      final int character = string.charAt(next);
+      if (65 <= character && 91 > character) {
+        return _from("-" + string);
+      }
+      next += i;
+      ++i;
+    } while (next < FORTY2_SIZE);
+
+    return _from(string);
   }
 
   /**
@@ -151,7 +263,7 @@ public final class Forty2 {
    *
    * @return the uppercase base-36 string representation of the internal number.
    */
-  private String toUppercaseBase36() {
+  public String toUppercaseBase36() {
     return this.toBase36().substring(1).toUpperCase();
   }
 
